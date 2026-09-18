@@ -14,6 +14,8 @@ public class InstallationPreset {
     public final String mainClassName;
     public final String javaAgentPath;
     public final String javaAgentArgs;
+    public final String verificationFile;
+    public final String gameFilesCheckFile;
 
     private InstallationPreset(Builder builder) {
         this.name = builder.name;
@@ -27,6 +29,8 @@ public class InstallationPreset {
         this.mainClassName = builder.mainClassName;
         this.javaAgentPath = builder.javaAgentPath;
         this.javaAgentArgs = builder.javaAgentArgs;
+        this.verificationFile = builder.verificationFile;
+        this.gameFilesCheckFile = builder.gameFilesCheckFile;
     }
 
     @NonNull
@@ -47,6 +51,8 @@ public class InstallationPreset {
         private String mainClassName = "";
         private String javaAgentPath = "";
         private String javaAgentArgs = "";
+        private String verificationFile = "";
+        private String gameFilesCheckFile = "";
 
         public Builder setName(String name) {
             this.name = name;
@@ -100,6 +106,29 @@ public class InstallationPreset {
 
         public Builder setJavaAgentArgs(String javaAgentArgs) {
             this.javaAgentArgs = javaAgentArgs;
+            return this;
+        }
+
+        /**
+         * Relative path (inside the instance's game/ dir) whose presence confirms the
+         * correct game files were installed for this preset - e.g. a native library that
+         * only exists in the Linux build. Used by GameInstance.hasFilesForLinux() to show
+         * a friendly "wrong platform" dialog instead of a silent crash on launch.
+         */
+        public Builder setVerificationFile(String verificationFile) {
+            this.verificationFile = verificationFile;
+            return this;
+        }
+
+        /**
+         * Relative path (inside the instance's game/ dir) whose presence confirms game
+         * files were installed at all. Defaults to "" (meaning: fall back to
+         * mainClassName + ".class", the old hardcoded behaviour) - only needed when the
+         * game isn't distributed as loose unpacked .class files, e.g. Necesse ships as an
+         * actual .jar, so its check file is the jar itself, not a class file.
+         */
+        public Builder setGameFilesCheckFile(String gameFilesCheckFile) {
+            this.gameFilesCheckFile = gameFilesCheckFile;
             return this;
         }
 

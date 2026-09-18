@@ -26,6 +26,8 @@ public class GameInstance {
     private String mainClassName;
     private String javaAgentPath;
     private String javaAgentArgs;
+    private String verificationFile;
+    private String gameFilesCheckFile;
 
     public GameInstance(String name, InstallationPreset preset) throws FileSystemException {
         this.name = name;
@@ -40,6 +42,8 @@ public class GameInstance {
         this.mainClassName = preset.mainClassName;
         this.javaAgentPath = preset.javaAgentPath;
         this.javaAgentArgs = preset.javaAgentArgs;
+        this.verificationFile = preset.verificationFile;
+        this.gameFilesCheckFile = preset.gameFilesCheckFile;
     }
 
     private static String buildHomePath(String name) {
@@ -145,12 +149,20 @@ public class GameInstance {
     }
 
     public boolean hasGameFiles() {
-        File mainClassFile = new File(getGamePath() + "/" + getMainClassName() + ".class");
-        return mainClassFile.exists();
+        String checkPath = (this.gameFilesCheckFile != null && !this.gameFilesCheckFile.isEmpty())
+                ? this.gameFilesCheckFile
+                : getMainClassName() + ".class";
+        File checkFile = new File(getGamePath() + "/" + checkPath);
+        return checkFile.exists();
     }
 
     public boolean hasFilesForLinux() {
-        File pzBulletFile = new File(getGamePath() + "/libPZBullet64.so");
-        return pzBulletFile.exists();
+        if (this.verificationFile == null || this.verificationFile.isEmpty()) {
+            // No verification file configured for this preset - nothing to check against,
+            // so don't block launch on it.
+            return true;
+        }
+        File verificationFile = new File(getGamePath() + "/" + this.verificationFile);
+        return verificationFile.exists();
     }
 }
