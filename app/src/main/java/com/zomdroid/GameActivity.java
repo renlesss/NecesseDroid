@@ -112,10 +112,11 @@ public class GameActivity extends AppCompatActivity
 
         System.loadLibrary("zomdroid");
 
-        System.load(AppStorage.requireSingleton().getHomePath() + "/" + gameInstance.getFmodLibraryPath() + "/libfmod.so");
-        System.load(AppStorage.requireSingleton().getHomePath() + "/" + gameInstance.getFmodLibraryPath() + "/libfmodstudio.so");
-
-        FMOD.init(this);
+        if (gameInstance.getFmodLibraryPath() != null && !gameInstance.getFmodLibraryPath().isEmpty()) {
+            System.load(AppStorage.requireSingleton().getHomePath() + "/" + gameInstance.getFmodLibraryPath() + "/libfmod.so");
+            System.load(AppStorage.requireSingleton().getHomePath() + "/" + gameInstance.getFmodLibraryPath() + "/libfmodstudio.so");
+            FMOD.init(this);
+        }
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
